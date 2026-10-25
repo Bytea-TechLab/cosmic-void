@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Cosmic Void">
+    <meta name="author" content="Bytea TechLab - Mateus Mendes">
+    <meta name="description" content="Cosmic Void 2.0: Guerra Galáctica - Bullet-hell espacial militar tático em HTML5 Canvas e JavaScript puro desenvolvido pela Bytea TechLab (Mateus Mendes).">
+    <title>Cosmic Void 2.0: Guerra Galáctica // Bytea TechLab</title>
+    <link rel="stylesheet" href="style.css?v=7.0">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00ffff">
+    <link rel="icon" type="image/png" href="img/icon-512.png">
+    <link rel="apple-touch-icon" href="img/icon-192.png">
+</head>
+<body>
+    <div id="crt-filter"></div>
+
+    <!-- Alerta de Orientação para Celular -->
+    <div id="portrait-warning" style="display: none;">
+        <div class="rotate-phone-icon">📱</div>
+        <h2>MODO PAISAGEM RECOMENDADO</h2>
+        <p>Gire seu dispositivo para a posição horizontal para melhor campo de combate.</p>
+        <button id="btn-dismiss-portrait" onclick="UI.dismissPortraitWarning()" style="margin-top: 15px; border: 1px solid #00e5ff; color: #00e5ff; background: rgba(0, 229, 255, 0.15); padding: 10px 18px; font-family: monospace; font-weight: bold; cursor: pointer; border-radius: 4px;">JOGAR EM MODO RETRATO MESMO ASSIM</button>
+    </div>
+
+    <div id="ui">
+        <div id="main-menu">
+            <h1 class="glitch" data-text="COSMIC VOID">COSMIC VOID</h1>
+            
+            <!-- Seletor dos 4 Modos Principais -->
+            <div id="game-mode-selector" style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; pointer-events: auto;">
+                <button id="tab-mode-campaign" onclick="UI.selectGameModeTab('campaign', this)" style="background: #0ff; color: #000; font-weight: bold; border-color: #0ff; min-height: 38px;">⚔ CAMPANHA</button>
+                <button id="tab-mode-quickrun" onclick="UI.selectGameModeTab('quickrun', this)" style="border-color: #ffaa00; color: #ffaa00; font-weight: bold; min-height: 38px;">⚡ QUICK RUN</button>
+                <button id="tab-mode-blackout" onclick="UI.selectGameModeTab('blackout', this)" style="border-color: #bf00ff; color: #bf00ff; font-weight: bold; min-height: 38px;">☣ BLACKOUT</button>
+                <button id="tab-mode-bossrush" onclick="UI.selectGameModeTab('bossrush', this)" style="border-color: #ff0055; color: #ff0055; font-weight: bold; min-height: 38px;">👑 BOSS RUSH</button>
+            </div>
+
+            <!-- PAINEL 1: CAMPANHA (COOPERATIVO 2 JOGADORES POR PADRÃO) -->
+            <div id="panel-campaign" style="display: block;">
+                <div id="difficulty-select" style="margin-bottom: 10px; border: 1px solid #0ff; padding: 8px 12px; display: inline-block; pointer-events: auto;">
+                    <p style="margin: 0 0 6px 0; font-size: 11px; letter-spacing: 2px;">DIFICULDADE DA CAMPANHA</p>
+                    <button onclick="GAME.setDifficulty(0.5, this)" id="btn-easy">FÁCIL</button>
+                    <button onclick="GAME.setDifficulty(1.0, this)" id="btn-normal" style="background: #0ff; color: #000;">NORMAL</button>
+                    <button onclick="GAME.setDifficulty(1.5, this)" id="btn-hard">DIFÍCIL</button>
+                </div>
+                <br>
+
+                <!-- Seleção Co-op Obrigatória por Padrão -->
+                <div id="coop-menu-section" style="border: 1px solid #00e5ff; background: rgba(5,15,25,0.85); padding: 14px; margin: 10px auto; max-width: 540px; pointer-events: auto; box-shadow: 0 0 20px rgba(0,229,255,0.2);">
+                    <span style="color: #00e5ff; font-weight: bold; letter-spacing: 2px; font-size: 12px; display: block; margin-bottom: 8px;">ESQUADRÃO COOPERATIVO // 2 JOGADORES (PADRÃO)</span>
+                    <div id="coop-p1-class-select" style="margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;">
+                        <span style="color:#00e5ff; font-weight:bold; font-size: 12px; width: 65px; text-align: right;">P1:</span>
+                        <button data-class="assault" onclick="GAME.selectCoopClass(0, 'assault', this)" style="background:#0ff; color:#000;">Assault</button>
+                        <button data-class="scout" onclick="GAME.selectCoopClass(0, 'scout', this)">Scout</button>
+                        <button data-class="tank" onclick="GAME.selectCoopClass(0, 'tank', this)">Tank</button>
+                        <button data-class="ranger" onclick="GAME.selectCoopClass(0, 'ranger', this)">Ranger</button>
+                    </div>
+                    <div id="coop-p2-class-select" style="margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;">
+                        <span style="color:#ffaa00; font-weight:bold; font-size: 12px; width: 65px; text-align: right;">P2:</span>
+                        <button data-class="assault" onclick="GAME.selectCoopClass(1, 'assault', this)">Assault</button>
+                        <button data-class="scout" onclick="GAME.selectCoopClass(1, 'scout', this)" style="background:#ffaa00; color:#000;">Scout</button>
+                        <button data-class="tank" onclick="GAME.selectCoopClass(1, 'tank', this)">Tank</button>
+                        <button data-class="ranger" onclick="GAME.selectCoopClass(1, 'ranger', this)">Ranger</button>
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                        <button onclick="GAME.startCoopFromMenu()" style="border-color:#00e5ff; background: rgba(0,229,255,0.25); color:#00e5ff; font-weight:bold; min-height: 42px; padding: 0 20px; font-size: 13px; box-shadow: 0 0 15px rgba(0,229,255,0.4);">INICIAR CAMPANHA CO-OP [T / ENTER]</button>
+                        <button onclick="GAME.continueGame()" id="btn-continue-checkpoint" style="border-color:#ffea00; color:#ffea00; font-weight:bold; box-shadow: 0 0 10px rgba(255,234,0,0.3); min-height: 42px; padding: 0 16px;">CONTINUAR [C]</button>
+                    </div>
+                </div>
+
+                <!-- Alternativa Solo Preservada -->
+                <div style="margin-top: 8px; pointer-events: auto;">
+                    <button onclick="GAME.start(GAME.menuP1Class || 'assault', false, false)" style="border-color: #334455; color: #778899; font-size: 11px; padding: 6px 14px; background: rgba(0,0,0,0.5);">MISSÃO SOLO ALTERNATIVA (1 JOGADOR)</button>
+                </div>
+            </div>
+
+            <!-- PAINEL 2: QUICK RUN (COOPERATIVO 2 JOGADORES) -->
+            <div id="panel-quickrun" style="display: none; border-top: 1px solid #ffaa00; padding-top: 12px; margin-top: 10px;">
+                <span style="color: #ffaa00; font-size: 11px; letter-spacing: 3px; font-weight: bold;">OPERAÇÕES RÁPIDAS COOPERATIVAS (2 JOGADORES)</span>
+                <p style="color: #cad8e5; font-size: 12px; margin: 6px 0 10px 0;">Partida em dupla com encontros dinâmicos, rascunho de melhorias simultâneo e estatísticas de esquadrão.</p>
+                <div style="margin-bottom: 12px;">
+                    <span style="color: #aaa; font-size: 11px; margin-right: 8px;">FORMATO:</span>
+                    <button id="btn-qr-standard" onclick="UI.selectQuickRunLength('standard', this)" style="border-color: #ffaa00; background: #ffaa00; color: #000; font-weight: bold;">PADRÃO (7 Fases / ~10m)</button>
+                    <button id="btn-qr-short" onclick="UI.selectQuickRunLength('short', this)" style="border-color: #ffaa00; color: #ffaa00;">BLITZ (4 Fases / ~5m)</button>
+                </div>
+                <div style="border: 1px solid #ffaa00; background: rgba(25,18,5,0.75); padding: 14px; margin: 10px auto; max-width: 540px; pointer-events: auto; box-shadow: 0 0 20px rgba(255,170,0,0.2);">
+                    <div id="qr-p1-class-select" style="margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;">
+                        <span style="color:#00e5ff; font-weight:bold; font-size: 12px; width: 65px; text-align: right;">P1:</span>
+                        <button data-class="assault" onclick="UI.selectQRClass(0, 'assault', this)" style="background:#0ff; color:#000;">Assault</button>
+                        <button data-class="scout" onclick="UI.selectQRClass(0, 'scout', this)">Scout</button>
+                        <button data-class="tank" onclick="UI.selectQRClass(0, 'tank', this)">Tank</button>
+                        <button data-class="ranger" onclick="UI.selectQRClass(0, 'ranger', this)">Ranger</button>
+                    </div>
+                    <div id="qr-p2-class-select" style="margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;">
+                        <span style="color:#ffaa00; font-weight:bold; font-size: 12px; width: 65px; text-align: right;">P2:</span>
+                        <button data-class="assault" onclick="UI.selectQRClass(1, 'assault', this)">Assault</button>
+                        <button data-class="scout" onclick="UI.selectQRClass(1, 'scout', this)" style="background:#ffaa00; color:#000;">Scout</button>
+                        <button data-class="tank" onclick="UI.selectQRClass(1, 'tank', this)">Tank</button>
+                        <button data-class="ranger" onclick="UI.selectQRClass(1, 'ranger', this)">Ranger</button>
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                        <button onclick="QUICKRUN.start(UI.qrP1Class || 'assault', UI.qrLength || 'standard', true, UI.qrP2Class || 'scout')" style="border-color:#ffaa00; background: rgba(255,170,0,0.25); color:#ffaa00; font-weight:bold; min-height: 42px; padding: 0 20px; font-size: 13px; box-shadow: 0 0 15px rgba(255,170,0,0.4);">INICIAR QUICK RUN CO-OP (2P)</button>
+                    </div>
+                </div>
+                <div style="margin-top: 8px; pointer-events: auto;">
+                    <button onclick="QUICKRUN.start(UI.qrP1Class || 'assault', UI.qrLength || 'standard', false)" style="border-color: #334455; color: #778899; font-size: 11px; padding: 6px 14px; background: rgba(0,0,0,0.5);">QUICK RUN SOLO (1P)</button>
+                </div>
+            </div>
+
+            <!-- PAINEL 3: BLACKOUT (COOPERATIVO 2 JOGADORES) -->
+            <div id="panel-blackout" style="display: none; border-top: 1px solid #bf00ff; padding-top: 12px; margin-top: 10px;">
+                <span style="color: #bf00ff; font-size: 11px; letter-spacing: 3px; font-weight: bold;">INCURSÃO COOPERATIVA AO SETOR SOMBRA // ROGUELITE (2P)</span>
+                <p style="color: #e0caef; font-size: 12px; margin: 6px 0 10px 0;">Setor militar não catalogado. Navegação conjunta por rotas táticas, anomalias e recuperação cooperativa de caixas pretas.</p>
+                <div style="border: 1px solid #bf00ff; background: rgba(20,5,30,0.75); padding: 14px; margin: 10px auto; max-width: 540px; pointer-events: auto; box-shadow: 0 0 20px rgba(191,0,255,0.2);">
+                    <div id="bo-p1-class-select" style="margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;">
+                        <span style="color:#00e5ff; font-weight:bold; font-size: 12px; width: 65px; text-align: right;">P1:</span>
+                        <button data-class="assault" onclick="UI.selectBOClass(0, 'assault', this)" style="background:#0ff; color:#000;">Assault</button>
+                        <button data-class="scout" onclick="UI.selectBOClass(0, 'scout', this)">Scout</button>
+                        <button data-class="tank" onclick="UI.selectBOClass(0, 'tank', this)">Tank</button>
+                        <button data-class="ranger" onclick="UI.selectBOClass(0, 'ranger', this)">Ranger</button>
+                    </div>
+                    <div id="bo-p2-class-select" style="margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;">
+                        <span style="color:#ffaa00; font-weight:bold; font-size: 12px; width: 65px; text-align: right;">P2:</span>
+                        <button data-class="assault" onclick="UI.selectBOClass(1, 'assault', this)">Assault</button>
+                        <button data-class="scout" onclick="UI.selectBOClass(1, 'scout', this)" style="background:#ffaa00; color:#000;">Scout</button>
+                        <button data-class="tank" onclick="UI.selectBOClass(1, 'tank', this)">Tank</button>
+                        <button data-class="ranger" onclick="UI.selectBOClass(1, 'ranger', this)">Ranger</button>
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                        <button onclick="BLACKOUT.start(UI.boP1Class || 'assault', true, UI.boP2Class || 'scout')" style="border-color:#bf00ff; background: rgba(191,0,255,0.25); color:#bf00ff; font-weight:bold; min-height: 42px; padding: 0 20px; font-size: 13px; box-shadow: 0 0 15px rgba(191,0,255,0.4);">INICIAR BLACKOUT CO-OP (2P)</button>
+                    </div>
+                </div>
+                <div style="margin-top: 8px; pointer-events: auto;">
+                    <button onclick="BLACKOUT.start(UI.boP1Class || 'assault', false)" style="border-color: #334455; color: #778899; font-size: 11px; padding: 6px 14px; background: rgba(0,0,0,0.5);">BLACKOUT SOLO (1P)</button>
+                </div>
+            </div>
+
+            <!-- PAINEL 4: BOSS RUSH (COOPERATIVO 2 JOGADORES) -->
+            <div id="panel-bossrush" style="display: none; border-top: 1px solid #ff0055; padding-top: 12px; margin-top: 10px;">
+                <span style="color: #ff0055; font-size: 11px; letter-spacing: 3px; font-weight: bold;">DESAFIO TÁTICO DE CHEFES // CO-OP (2P)</span>
+                <p style="color: #f0cad5; font-size: 12px; margin: 6px 0 10px 0;">Batalhas sequenciais e coordenadas em dupla contra máquinas capitais e anomalias do vazio.</p>
+                <div style="border: 1px solid #ff0055; background: rgba(25,5,15,0.75); padding: 14px; margin: 10px auto; max-width: 540px; pointer-events: auto; box-shadow: 0 0 20px rgba(255,0,85,0.2);">
+                    <div id="br-p1-class-select" style="margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;">
+                        <span style="color:#00e5ff; font-weight:bold; font-size: 12px; width: 65px; text-align: right;">P1:</span>
+                        <button data-class="assault" onclick="UI.selectBRClass(0, 'assault', this)" style="background:#0ff; color:#000;">Assault</button>
+                        <button data-class="scout" onclick="UI.selectBRClass(0, 'scout', this)">Scout</button>
+                        <button data-class="tank" onclick="UI.selectBRClass(0, 'tank', this)">Tank</button>
+                        <button data-class="ranger" onclick="UI.selectBRClass(0, 'ranger', this)">Ranger</button>
+                    </div>
+                    <div id="br-p2-class-select" style="margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;">
+                        <span style="color:#ffaa00; font-weight:bold; font-size: 12px; width: 65px; text-align: right;">P2:</span>
+                        <button data-class="assault" onclick="UI.selectBRClass(1, 'assault', this)">Assault</button>
+                        <button data-class="scout" onclick="UI.selectBRClass(1, 'scout', this)" style="background:#ffaa00; color:#000;">Scout</button>
+                        <button data-class="tank" onclick="UI.selectBRClass(1, 'tank', this)">Tank</button>
+                        <button data-class="ranger" onclick="UI.selectBRClass(1, 'ranger', this)">Ranger</button>
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                        <button onclick="BOSSRUSH.start(UI.brP1Class || 'assault', true, UI.brP2Class || 'scout')" style="border-color:#ff0055; background: rgba(255,0,85,0.25); color:#ff0055; font-weight:bold; min-height: 42px; padding: 0 20px; font-size: 13px; box-shadow: 0 0 15px rgba(255,0,85,0.4);">INICIAR BOSS RUSH CO-OP (2P)</button>
+                    </div>
+                </div>
+                <div style="margin-top: 8px; pointer-events: auto;">
+                    <button onclick="BOSSRUSH.start(UI.brP1Class || 'assault', false)" style="border-color: #334455; color: #778899; font-size: 11px; padding: 6px 14px; background: rgba(0,0,0,0.5);">BOSS RUSH SOLO (1P)</button>
+                </div>
+            </div>
+
+            <div style="margin-top: 16px; border-top: 1px solid #1a2530; padding-top: 10px; pointer-events: auto; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                <button onclick="UI.toggleControls()" style="border-color: #f0f; color: #f0f;">VER CONTROLES</button>
+                <button onclick="UI.toggleSettings()" style="border-color: #0ff; color: #0ff;">OPÇÕES & VÍDEO</button>
+                <button onclick="UI.toggleCredits()" style="border-color: #ffaa00; color: #ffaa00; font-weight: bold;">CRÉDITOS / SOBRE</button>
+                <button id="pwa-install-btn" onclick="UI.installPWA()" style="display: none; border-color: #00ffcc; color: #00ffcc; font-weight: bold; box-shadow: 0 0 10px rgba(0,255,204,0.4);">⬇ INSTALAR APP</button>
+            </div>
+            <div style="margin-top: 14px; font-size: 11px; color: #64748b; letter-spacing: 1px; font-family: monospace; pointer-events: auto;">
+                Cosmic Void v<span class="game-version-label">2.1.0</span> • Bytea TechLab: Mateus Mendes • 
+                <a href="https://github.com/Bytea-TechLab" target="_blank" rel="noopener noreferrer" style="color: #00e5ff; text-decoration: underline;">GitHub Org ↗</a>
+            </div>
+        </div>
+
+        <div id="controls-menu" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.95); padding: 2rem; border: 2px solid #0ff; z-index: 100; text-align: left; pointer-events: auto;">
+            <h2 style="text-align: center; color: #f0f;">COMANDOS TÁTICOS</h2>
+            <div style="display: flex; gap: 40px; margin-bottom: 20px; flex-wrap: wrap;">
+                <div>
+                    <h3 style="color: #0ff;">DESKTOP (TECLADO)</h3>
+                    <p><b>Mover:</b> W A S D ou Setas</p>
+                    <p><b>Atirar:</b> Espaço</p>
+                    <p><b>Dash / PARRY:</b> Shift Esquerdo</p>
+                    <p><b>Especial:</b> C</p>
+                    <p><b>Sinergia Solo:</b> X (com 100% Especial)</p>
+                    <p><b>Pausa:</b> P</p>
+                </div>
+                <div>
+                    <h3 style="color: #0f0;">MOBILE (TOUCH)</h3>
+                    <p><b>Mover:</b> Joystick Virtual (Lado Esquerdo)</p>
+                    <p><b>Dash / PARRY:</b> Botão Azul Ciano (Direita)</p>
+                    <p><b>Atirar:</b> Botão Vermelho Fogo</p>
+                    <p><b>Especial:</b> Botão Âmbar (Quando 100%)</p>
+                    <p><b>Pausa:</b> Botão [⏸] no Topo</p>
+                </div>
+            </div>
+            <p style="color: #ff0; text-align: center; font-size: 12px;">DICA: Use o Dash exatamente quando o tiro for atingir a sua nave para refletir em PARRY (4x Dano)!</p>
+            <div style="text-align: center;"><button onclick="UI.toggleControls()">FECHAR</button></div>
+        </div>
+
+        <!-- Menu de Opções Táticas & Acessibilidade -->
+        <div id="settings-menu" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(5,8,15,0.98); padding: 1.5rem 2rem; border: 2px solid #0ff; z-index: 1000; text-align: left; pointer-events: auto; min-width: 340px; box-shadow: 0 0 25px rgba(0,229,255,0.3);">
+            <h2 style="text-align: center; color: #0ff; margin-top:0; letter-spacing: 2px;">OPÇÕES // ACESSIBILIDADE</h2>
+            
+            <div style="margin: 12px 0;">
+                <label style="display:block; margin-bottom: 4px; color:#fff;">Perfil Gráfico / Performance:</label>
+                <select id="opt-graphics" onchange="UI.updateSetting('graphicProfile', this.value)" style="width:100%; padding:6px; background:#111; color:#0ff; border:1px solid #0ff;">
+                    <option value="high">Alta Fidelidade (DPR 2.0 / 60 FPS)</option>
+                    <option value="medium">Equilibrado (DPR 1.5)</option>
+                    <option value="low">Econômico / Bateria (DPR 1.0)</option>
+                </select>
+            </div>
+
+            <div style="margin: 12px 0;">
+                <label style="display:block; margin-bottom: 4px; color:#fff;">Tremor de Tela (Screen Shake):</label>
+                <select id="opt-shake" onchange="UI.updateSetting('screenShake', parseFloat(this.value))" style="width:100%; padding:6px; background:#111; color:#0ff; border:1px solid #0ff;">
+                    <option value="1.0">100% (Normal)</option>
+                    <option value="0.5">50% (Moderado)</option>
+                    <option value="0.0">0% (Desativado)</option>
+                </select>
+            </div>
+
+            <div style="margin: 12px 0;">
+                <label style="display:block; margin-bottom: 4px; color:#fff;">Densidade de Partículas:</label>
+                <select id="opt-particles" onchange="UI.updateSetting('particleDensity', parseFloat(this.value))" style="width:100%; padding:6px; background:#111; color:#0ff; border:1px solid #0ff;">
+                    <option value="1.0">100% (Completo)</option>
+                    <option value="0.5">50% (Otimizado)</option>
+                    <option value="0.25">25% (Mínimo)</option>
+                </select>
+            </div>
+
+            <div style="margin: 12px 0;">
+                <label style="display:block; margin-bottom: 4px; color:#fff;">Intensidade de Flashes (Fotossensibilidade):</label>
+                <select id="opt-flash" onchange="UI.updateSetting('flashIntensity', parseFloat(this.value))" style="width:100%; padding:6px; background:#111; color:#0ff; border:1px solid #0ff;">
+                    <option value="1.0">100% (Normal)</option>
+                    <option value="0.4">40% (Suave)</option>
+                    <option value="0.0">0% (Desativado)</option>
+                </select>
+            </div>
+
+            <div style="margin: 12px 0;">
+                <label style="display:block; margin-bottom: 4px; color:#fff;">Sensibilidade do Joystick Virtual:</label>
+                <select id="opt-joysens" onchange="UI.updateSetting('joySensitivity', parseFloat(this.value))" style="width:100%; padding:6px; background:#111; color:#0ff; border:1px solid #0ff;">
+                    <option value="0.75">75% (Suave)</option>
+                    <option value="1.0">100% (Padrão)</option>
+                    <option value="1.25">125% (Rápido)</option>
+                    <option value="1.5">150% (Agulha)</option>
+                </select>
+            </div>
+
+            <div style="margin: 12px 0;">
+                <label style="display:block; margin-bottom: 4px; color:#fff;">Exibição dos Controles Táteis na Tela:</label>
+                <select id="opt-controls" onchange="UI.updateSetting('controlMode', this.value)" style="width:100%; padding:6px; background:#111; color:#0ff; border:1px solid #0ff;">
+                    <option value="auto">Automático (Detectar Tela de Toque)</option>
+                    <option value="always">Sempre Ativo na Tela</option>
+                    <option value="hidden">Ocultar Controles na Tela</option>
+                </select>
+            </div>
+
+            <div style="margin: 12px 0; display: flex; flex-direction: column; gap: 8px;">
+                <label style="color:#fff; cursor:pointer;">
+                    <input type="checkbox" id="opt-reduced-motion" onchange="UI.updateSetting('reducedMotion', this.checked)"> Movimento Reduzido (Reduz tremores e distorções)
+                </label>
+                <label style="color:#fff; cursor:pointer;">
+                    <input type="checkbox" id="opt-slowmo" onchange="UI.updateSetting('slowMotion', this.checked)"> Efeito Slow Motion / Câmera Lenta
+                </label>
+                <label style="color:#fff; cursor:pointer;">
+                    <input type="checkbox" id="opt-crt" onchange="UI.updateSetting('crtFilter', this.checked)"> Filtro CRT / Scanlines Retrô
+                </label>
+                <label style="color:#fff; cursor:pointer;">
+                    <input type="checkbox" id="opt-haptics" onchange="UI.updateSetting('haptics', this.checked)"> Vibração Háptica no Celular (Dano/Parry)
+                </label>
+                <label style="color:#fff; cursor:pointer;">
+                    <input type="checkbox" id="opt-autofire" onchange="UI.updateSetting('autoFire', this.checked)"> Auto-Disparo Móvel Contínuo
+                </label>
+            </div>
+
+            <div style="text-align: center; margin-top: 18px;">
+                <button onclick="UI.toggleSettings()" style="border-color:#0ff; color:#0ff; font-weight:bold;">CONFIRMAR E FECHAR</button>
+            </div>
+        </div>
+
+        <!-- Tela de Créditos / Sobre (Acessível pelo Menu Principal) -->
+        <div id="credits-menu" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(5,8,15,0.98); padding: 1.8rem 2.2rem; border: 2px solid #ffaa00; z-index: 1000; text-align: center; pointer-events: auto; min-width: 320px; max-width: 92vw; box-shadow: 0 0 30px rgba(255,170,0,0.35); font-family: 'Courier New', monospace;">
+            <h2 style="color: #ffaa00; margin-top: 0; letter-spacing: 3px; font-size: 1.5rem;">CRÉDITOS // SOBRE</h2>
+            <div style="margin: 15px 0; color: #fff; font-size: 13px; line-height: 1.6;">
+                <p style="font-size: 18px; font-weight: bold; color: #00e5ff; letter-spacing: 2px; margin: 4px 0;">COSMIC VOID</p>
+                <p style="color: #94a3b8; font-size: 12px; margin-bottom: 14px;">Versão: <strong style="color: #00ffcc;">v<span class="game-version-label">2.1.0</span></strong></p>
+                
+                <p style="margin: 10px 0;">
+                    <span style="color: #94a3b8; font-size: 11px; letter-spacing: 1px; display: block;">DESENVOLVIMENTO:</span>
+                    <strong style="color: #ffea00; font-size: 15px;">Bytea TechLab: Mateus Mendes</strong>
+                </p>
+
+                <p style="margin: 12px 0;">
+                    <span style="color: #94a3b8; font-size: 11px; letter-spacing: 1px; display: block;">ORGANIZAÇÃO NO GITHUB:</span>
+                    <a href="https://github.com/Bytea-TechLab" target="_blank" rel="noopener noreferrer" style="color: #00e5ff; font-weight: bold; text-decoration: underline; font-size: 14px;">
+                        github.com/Bytea-TechLab ↗
+                    </a>
+                </p>
+
+                <div style="margin-top: 16px; padding: 10px 12px; border: 1px solid #1e293b; background: rgba(0,0,0,0.4); border-radius: 4px; font-size: 11px; color: #94a3b8; text-align: left; line-height: 1.5;">
+                    <p style="margin: 3px 0;"><strong style="color: #00e5ff;">• Engine:</strong> HTML5 Canvas 2D / JavaScript puro (sem bibliotecas externas).</p>
+                    <p style="margin: 3px 0;"><strong style="color: #00e5ff;">• Gráficos & Efeitos:</strong> Sprites e partículas procedurais 100% próprios.</p>
+                    <p style="margin: 3px 0;"><strong style="color: #00e5ff;">• Assets Externos:</strong> Ícones gerados para o projeto. Livre de material proprietário de terceiros.</p>
+                </div>
+            </div>
+            <div style="margin-top: 18px;">
+                <button onclick="UI.toggleCredits()" style="border-color: #ffaa00; background: rgba(255,170,0,0.18); color: #ffaa00; font-weight: bold; padding: 8px 24px; cursor: pointer; border-radius: 3px; font-size: 13px; letter-spacing: 1px;">VOLTAR AO MENU</button>
+            </div>
+        </div>
+
+        <!-- HUD Durante Combate -->
+        <div id="hud" style="display: none;">
+            <div style="display: flex; justify-content: space-between; width: 100%;">
+                <div>
+                    <span style="color: #00e5ff; font-size: 10px; font-weight: bold; letter-spacing: 1px; display: block; margin-bottom: 2px;">PILOTO 1 [C/X]</span>
+                    <div class="bar-container" id="hp-container-p1"><div id="hp-bar-p1" class="hp-bar" style="background: #00e5ff; width: 100%;"></div><div id="hp-text-p1" class="bar-text">100/100</div></div>
+                    <div class="bar-container" style="height: 5px; border-color: #f0f; width: 100px;"><div id="sp-bar-p1" class="sp-bar" style="background: #f0f; width: 0%;"></div></div>
+                </div>
+                <div id="p2-hp-container" style="display:none; text-align: right;">
+                    <span style="color: #ffaa00; font-size: 10px; font-weight: bold; letter-spacing: 1px; display: block; margin-bottom: 2px;">PILOTO 2 [L/K]</span>
+                    <div class="bar-container" id="hp-container-p2" style="border-color: #ffaa00;"><div id="hp-bar-p2" class="hp-bar" style="background:#ffaa00; width: 100%;"></div><div id="hp-text-p2" class="bar-text">100/100</div></div>
+                    <div class="bar-container" style="height: 5px; border-color: #f0f; width: 100px; float: right;"><div id="sp-bar-p2" class="sp-bar" style="background: #f0f; width: 0%;"></div></div>
+                </div>
+            </div>
+            <div class="sector-text">SECTOR: <span id="sector-display">1</span> | Créditos: <span style="color:#00e5ff">P1 <span id="hud-credits-p1">0</span>C</span> <span id="hud-credits-p2-box" style="display:none; color:#ffaa00"> | P2 <span id="hud-credits-p2">0</span>C</span></div>
+        </div>
+
+        <!-- Controles Móveis em Tela (Virtual Joystick & Action Buttons) -->
+        <div id="mobile-controls" style="display: none;">
+            <!-- Player 1 Zone (Esquerda / Solo) -->
+            <div id="touch-p1-group">
+                <div id="touch-joystick-zone">
+                    <div id="joystick-base" style="display: none;">
+                        <div id="joystick-knob"></div>
+                    </div>
+                </div>
+                <div id="touch-action-buttons">
+                    <button id="touch-dash-btn" class="touch-btn touch-btn-dash" aria-label="P1 Dash e Parry">
+                        <span class="btn-main-label">DASH</span>
+                        <span class="btn-sub-label">PARRY</span>
+                    </button>
+                    <button id="touch-fire-btn" class="touch-btn touch-btn-fire" aria-label="P1 Atirar">
+                        <span class="btn-main-label">FOGO</span>
+                    </button>
+                    <button id="touch-spec-btn" class="touch-btn touch-btn-spec" aria-label="P1 Especial">
+                        <span class="btn-main-label">SPEC</span>
+                    </button>
+                    <button id="touch-syn-btn" class="touch-btn touch-btn-syn" aria-label="P1 Sinergia">
+                        <span class="btn-main-label">LINK</span>
+                    </button>
+                </div>
+            </div>
+
+            <button id="touch-pause-btn" aria-label="Pausar">⏸</button>
+
+            <!-- Player 2 Zone (Direita - Co-op Local Móvel) -->
+            <div id="touch-p2-group" style="display: none;">
+                <div id="touch-joystick-zone-p2">
+                    <div id="joystick-base-p2" style="display: none;">
+                        <div id="joystick-knob-p2"></div>
+                    </div>
+                </div>
+                <div id="touch-action-buttons-p2">
+                    <button id="touch-dash-btn-p2" class="touch-btn touch-btn-dash touch-btn-p2" aria-label="P2 Dash e Parry">
+                        <span class="btn-main-label">DASH</span>
+                        <span class="btn-sub-label">PARRY</span>
+                    </button>
+                    <button id="touch-fire-btn-p2" class="touch-btn touch-btn-fire touch-btn-p2" aria-label="P2 Atirar">
+                        <span class="btn-main-label">FOGO</span>
+                    </button>
+                    <button id="touch-spec-btn-p2" class="touch-btn touch-btn-spec touch-btn-p2" aria-label="P2 Especial">
+                        <span class="btn-main-label">SPEC</span>
+                    </button>
+                    <button id="touch-syn-btn-p2" class="touch-btn touch-btn-syn touch-btn-p2" aria-label="P2 Sinergia">
+                        <span class="btn-main-label">LINK</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="boss-warning" style="display: none; position: absolute; top: 30%; width: 100%; text-align: center; color: #f00; font-size: 2rem; background: rgba(255,0,0,0.2); padding: 20px 0; border-top: 2px solid #f00; border-bottom: 2px solid #f00;">
+            <h1 class="glitch" id="boss-title-text" data-text="WARNING: BOSS DETECTED">WARNING: BOSS DETECTED</h1>
+        </div>
+        <div id="boss-ui" style="display: none; position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 70%; text-align: center;">
+            <div id="boss-name-ui" style="color: #f00; font-weight: bold; letter-spacing: 5px; margin-bottom: 5px; text-shadow: 0 0 5px #f00;">UNKNOWN ENTITY</div>
+            <div style="width: 100%; height: 15px; border: 2px solid #f00; background: #220000;"><div id="boss-hp-bar" style="width: 100%; height: 100%; background: #f00; transition: width 0.1s;"></div></div>
+        </div>
+
+        <div id="transmission-box" style="display: none;"></div>
+
+        <div id="sanctuary" style="display: none; pointer-events: auto; background: rgba(5, 8, 15, 0.95); border: 2px solid #00e5ff; box-shadow: 0 0 30px rgba(0, 229, 255, 0.25); padding: 2rem; text-align: center;">
+            <div style="border-bottom: 1px solid #1a3040; padding-bottom: 10px; margin-bottom: 15px;">
+                <span style="color: #00e5ff; font-size: 11px; letter-spacing: 4px; display: block;">BASE ESTELAR ALIADA // SETOR DE REABASTECIMENTO</span>
+                <h2 style="color: #fff; margin: 5px 0; letter-spacing: 3px;">HANGAR CENTRAL DA FROTA</h2>
+            </div>
+            <p style="color: #7ef; font-size: 13px; margin: 10px 0;">Sistemas de armas recalibrados. Blindagem restaurada em 25%.</p>
+            <div style="margin: 20px 0; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <button onclick="UI.toggleUpgrades()" style="border-color: #00e5ff; color: #00e5ff; font-weight: bold;">[U] TERMINAL DE MELHORIAS</button>
+                <button onclick="SANCTUARY.launch()" style="border-color: #ffaa00; color: #ffaa00; font-weight: bold;">[ENTER] AUTORIZAR DECOLAGEM</button>
+            </div>
+        </div>
+        
+        <div id="upgrades" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.92); padding: 1.5rem; border: 1px solid #0ff; pointer-events: auto;">
+            <h2>UPGRADES TERMINAL</h2>
+            <div style="display: flex; gap: 20px; text-align: center; flex-wrap: wrap; justify-content: center;">
+                <div style="border: 1px solid #0ff; padding: 12px; min-width: 140px;">
+                    <h3 style="color:#0ff; margin-top:0;">JOGADOR 1</h3>
+                    <p>Créditos: <span id="credits-p1"></span>C</p>
+                    <button onclick="UI.buyUpgrade('dmg', 0)">+ Dano</button><br>
+                    <button onclick="UI.buyUpgrade('spd', 0)">+ Velocidade</button><br>
+                    <button onclick="UI.buyUpgrade('hp', 0)">+ Defesa / HP</button><br>
+                    <button onclick="UI.buyUpgrade('spec', 0)" style="border-color:#f0f; color:#f0f;">+ Classe Perk</button>
+                </div>
+                <div id="upgrades-p2-col" style="border: 1px solid #0f0; padding: 12px; display:none; min-width: 140px;">
+                    <h3 style="color:#0f0; margin-top:0;">JOGADOR 2</h3>
+                    <p>Créditos: <span id="credits-p2"></span>C</p>
+                    <button onclick="UI.buyUpgrade('dmg', 1)">+ Dano</button><br>
+                    <button onclick="UI.buyUpgrade('spd', 1)">+ Velocidade</button><br>
+                    <button onclick="UI.buyUpgrade('hp', 1)">+ Defesa / HP</button><br>
+                    <button onclick="UI.buyUpgrade('spec', 1)" style="border-color:#f0f; color:#f0f;">+ Classe Perk</button>
+                </div>
+            </div>
+            <p><br><button onclick="UI.toggleUpgrades()">[ Fechar ]</button></p>
+        </div>
+
+        <div id="pause-menu" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; background: rgba(0,0,0,0.9); padding: 2rem; border: 1px solid #0ff; pointer-events: auto; z-index: 1000;">
+            <h2>JOGO PAUSADO</h2>
+            <button onclick="UI.togglePause()">Voltar</button>
+            <button onclick="location.reload()">Sair</button>
+        </div>
+
+        <div id="game-over" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; background: rgba(255,0,0,0.2); padding: 2rem; border: 1px solid #f00; pointer-events: auto;">
+            <h2 class="glitch" data-text="SINAL PERDIDO">SINAL PERDIDO</h2>
+            <p>A frota foi destruída... Mas os dados foram salvos.</p>
+            <button style="border-color: #f00; color: #f00;" onclick="location.reload()">VOLTAR AO MENU</button>
+        </div>
+        
+        <div id="fake-pause" style="display: none;"><h2 class="glitch" data-text="P A U S E D ?">P A U S E D ?</h2></div>
+        <div id="signal-lost" style="display: none;"></div>
+        <div id="parry-flash" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: white; opacity: 0; pointer-events: none; z-index: 200;"></div>
+        <div id="parry-text" style="display: none; position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); color: #0ff; font-size: 4rem; font-weight: bold; font-style: italic; text-shadow: 0 0 20px #0ff; z-index: 201; pointer-events: none;">PARRY!</div>
+        <button id="villain-skip-btn" onclick="if(typeof VILLAIN!=='undefined') VILLAIN.skipIntro();" style="display: none; position: absolute; bottom: 30px; right: 30px; background: rgba(17, 7, 31, 0.85); border: 1px solid #00e5ff; color: #00e5ff; font-family: 'Courier New', monospace; font-size: 12px; font-weight: bold; padding: 10px 18px; letter-spacing: 2px; cursor: pointer; z-index: 1000; box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);">PULAR INTRO [V]</button>
+    </div>
+    <canvas id="gameCanvas"></canvas>
+
+    <script src="js/save.js?v=7.0"></script>
+    <script src="js/pool.js?v=7.0"></script>
+    <script src="js/controls.js?v=7.0"></script>
+    <script src="js/events.js?v=7.0"></script>
+    <script src="js/effects.js?v=7.0"></script>
+    <script src="js/renderer.js?v=7.0"></script>
+    <script src="js/projectile.js?v=7.0"></script>
+    <script src="js/drops.js?v=7.0"></script>
+    <script src="js/collisions.js?v=7.0"></script>
+    <script src="js/ui.js?v=7.0"></script>
+    <script src="js/world.js?v=7.0"></script>
+    <script src="js/sanctuary.js?v=7.0"></script>
+    <script src="js/enemy.js?v=7.0"></script>
+    <script src="js/boss.js?v=7.0"></script>
+    <script src="js/villain.js?v=7.0"></script>
+    <script src="js/pacing.js?v=7.0"></script>
+    <script src="js/player.js?v=7.0"></script>
+    <script src="js/quickrun.js?v=7.0"></script>
+    <script src="js/blackout.js?v=7.0"></script>
+    <script src="js/bossrush.js?v=7.0"></script>
+    <script src="js/game.js?v=7.0"></script>
+    <script>
+        // Suporte PWA e Instalação Offline
+        window.deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            window.deferredPrompt = e;
+            const btn = document.getElementById('pwa-install-btn');
+            if (btn) btn.style.display = 'inline-block';
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js?v=7.0')
+                    .then(reg => {
+                        console.log('[PWA] Service Worker v7.0 ativo no escopo:', reg.scope);
+                    })
+                    .catch(err => console.warn('[PWA] Service Worker erro:', err));
+            });
+        }
+    </script>
+</body>
+</html>

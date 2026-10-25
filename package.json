@@ -1,0 +1,20 @@
+{
+  "name": "cosmic-void",
+  "version": "2.1.0",
+  "description": "Bullet-hell espacial militar tático em HTML5 Canvas e JavaScript puro desenvolvido pela Bytea TechLab.",
+  "scripts": {
+    "test": "node scratch/test_villain_etapa1.js && node scratch/test_verification.js && node scratch/test_cinematic_expansion.js"
+  },
+  "keywords": [
+    "bullet-hell",
+    "canvas",
+    "game",
+    "javascript",
+    "arcade",
+    "space-shooter",
+    "pwa"
+  ],
+  "author": "Bytea TechLab (Mateus Mendes)",
+  "license": "MIT",
+  "private": false
+}

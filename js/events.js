@@ -1,0 +1,1 @@
+const EVENTS = { listeners: {}, on(e,cb){if(!this.listeners[e])this.listeners[e]=[];this.listeners[e].push(cb);}, emit(e,d){if(this.listeners[e])this.listeners[e].forEach(cb=>cb(d));} };

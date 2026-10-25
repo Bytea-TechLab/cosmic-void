@@ -1,0 +1,25 @@
+# Dependências e Builds
+node_modules/
+dist/
+build/
+
+# Testes e Scripts Temporários
+scratch/
+*.log
+
+# Arquivos do Sistema Operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Ambientes e Editores Locais
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.env
+.env.local
+
+# Dumps de Estado e Saves Temporários
+*.tmp
+*.bak

@@ -1,0 +1,464 @@
+body,
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: #030305;
+  color: #0ff;
+  font-family: "Courier New", monospace;
+  overflow: hidden;
+  user-select: none;
+}
+#gameCanvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+#crt-filter { 
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%); 
+    background-size: 100% 3px; 
+    pointer-events: none; z-index: 10; 
+}
+#ui {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+}
+#main-menu,
+#sanctuary,
+#upgrades,
+#fake-pause,
+#pause-menu,
+#game-over {
+  pointer-events: auto;
+}
+#main-menu,
+#sanctuary,
+#upgrades,
+#fake-pause {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 2rem;
+  border: 1px solid #333;
+}
+#hud {
+  padding: 20px;
+}
+.bar-container {
+  position: relative;
+  width: 220px;
+  height: 16px;
+  border: 1px solid #00e5ff;
+  margin-bottom: 10px;
+  background: rgba(10, 16, 24, 0.85);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.8), 0 0 6px rgba(0, 229, 255, 0.2);
+  clip-path: polygon(0 0, 100% 0, 96% 100%, 0 100%);
+}
+.hp-bar,
+.sp-bar {
+  height: 100%;
+  transition: width 0.2s;
+}
+.bar-text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: 0;
+  left: 0;
+  font-size: 12px;
+  color: #fff;
+  font-weight: bold;
+  line-height: 15px;
+  text-shadow: 1px 1px 2px #000;
+}
+.glitch {
+  position: relative;
+  animation: glitch 1s linear infinite;
+}
+@keyframes glitch {
+  2%,
+  64% {
+    transform: translate(2px, 0) skew(0deg);
+  }
+  4%,
+  60% {
+    transform: translate(-2px, 0) skew(0deg);
+  }
+  62% {
+    transform: translate(0, 0) skew(5deg);
+  }
+}
+#transmission-box {
+  position: absolute;
+  left: 0;
+  top: 70%;
+  background: rgba(0, 0, 0, 0.8);
+  border-right: 2px solid #0ff;
+  padding: 15px;
+  width: 300px;
+  font-size: 12px;
+  transition: transform 0.5s;
+  transform: translateX(-100%);
+}
+#signal-lost {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  z-index: 20;
+}
+button {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #0ff;
+  color: #0ff;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: 0.2s;
+  font-family: inherit;
+  margin: 5px;
+}
+button:hover {
+  background: #0ff;
+  color: #000;
+  box-shadow: 0 0 15px #0ff;
+}
+
+/* ==========================================================================
+   COSMIC VOID 2.0 — MOBILE, TOUCH CONTROLS & RESPONSIVE SAFE AREAS
+   ========================================================================== */
+html, body {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
+  touch-action: none;
+}
+
+#ui {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  box-sizing: border-box;
+}
+
+#main-menu, #upgrades, #settings-menu, #controls-menu {
+  max-height: 88vh;
+  max-width: 92vw;
+  overflow-y: auto;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+#mobile-controls {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 15;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: none;
+}
+
+#touch-joystick-zone {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 60%;
+  height: 100%;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+#joystick-base {
+  position: absolute;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 229, 255, 0.08) 0%, rgba(0, 229, 255, 0.22) 70%, rgba(0, 229, 255, 0.45) 100%);
+  border: 2px solid rgba(0, 229, 255, 0.6);
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.3), inset 0 0 15px rgba(0, 229, 255, 0.2);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+#joystick-knob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #00ffff 0%, #0088aa 100%);
+  box-shadow: 0 0 12px #00ffff;
+  border: 2px solid #ffffff;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+#touch-pause-btn {
+  position: absolute;
+  top: max(15px, env(safe-area-inset-top));
+  right: max(15px, env(safe-area-inset-right));
+  width: 44px;
+  height: 44px;
+  background: rgba(10, 16, 24, 0.85);
+  border: 1px solid #00e5ff;
+  color: #00e5ff;
+  font-size: 18px;
+  border-radius: 6px;
+  pointer-events: auto;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+}
+
+#touch-action-buttons {
+  position: absolute;
+  right: max(20px, env(safe-area-inset-right));
+  bottom: max(20px, env(safe-area-inset-bottom));
+  width: 220px;
+  height: 220px;
+  pointer-events: none;
+}
+
+.touch-btn {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+  font-family: "Courier New", monospace;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.08s ease, filter 0.08s ease;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+.touch-btn:active, .touch-btn.active {
+  transform: scale(0.92);
+  filter: brightness(1.3);
+}
+
+.touch-btn-dash {
+  right: 0px;
+  bottom: 20px;
+  width: 78px;
+  height: 78px;
+  background: radial-gradient(circle, rgba(0, 229, 255, 0.25) 0%, rgba(0, 100, 150, 0.7) 100%);
+  border: 2px solid #00e5ff;
+  color: #ffffff;
+  box-shadow: 0 0 18px rgba(0, 229, 255, 0.5);
+}
+.touch-btn-dash .btn-main-label {
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+.touch-btn-dash .btn-sub-label {
+  font-size: 9px;
+  color: #ffea00;
+  letter-spacing: 1px;
+}
+
+.touch-btn-fire {
+  right: 88px;
+  bottom: 10px;
+  width: 66px;
+  height: 66px;
+  background: radial-gradient(circle, rgba(255, 0, 100, 0.25) 0%, rgba(180, 0, 50, 0.7) 100%);
+  border: 2px solid #ff0055;
+  color: #ffffff;
+  box-shadow: 0 0 14px rgba(255, 0, 85, 0.4);
+}
+.touch-btn-fire .btn-main-label {
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.touch-btn-spec {
+  right: 30px;
+  bottom: 110px;
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle, rgba(255, 200, 0, 0.25) 0%, rgba(180, 120, 0, 0.7) 100%);
+  border: 2px solid #ffbb00;
+  color: #ffffff;
+  box-shadow: 0 0 14px rgba(255, 187, 0, 0.4);
+}
+.touch-btn-spec .btn-main-label {
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.touch-btn-syn {
+  right: 100px;
+  bottom: 85px;
+  width: 54px;
+  height: 54px;
+  background: radial-gradient(circle, rgba(0, 255, 136, 0.25) 0%, rgba(0, 150, 80, 0.7) 100%);
+  border: 2px solid #00ff88;
+  color: #ffffff;
+  box-shadow: 0 0 14px rgba(0, 255, 136, 0.4);
+}
+.touch-btn-syn .btn-main-label {
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+/* Estilos de Controles Móveis em Co-op Local */
+.coop-touch-active #touch-action-buttons {
+  right: auto;
+  left: 170px;
+  bottom: 15px;
+}
+.coop-touch-active #touch-joystick-zone {
+  width: 160px;
+}
+
+#touch-p2-group {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  pointer-events: none;
+}
+#touch-joystick-zone-p2 {
+  position: absolute;
+  bottom: 0;
+  right: 170px;
+  width: 160px;
+  height: 100%;
+  pointer-events: auto;
+  touch-action: none;
+}
+#touch-action-buttons-p2 {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  width: 160px;
+  height: 180px;
+  pointer-events: none;
+}
+.touch-btn-p2 {
+  border-color: #ffaa00;
+  color: #ffffff;
+  background: radial-gradient(circle, rgba(255, 170, 0, 0.25) 0%, rgba(180, 100, 0, 0.7) 100%);
+  box-shadow: 0 0 14px rgba(255, 170, 0, 0.4);
+}
+.touch-btn-p2.touch-btn-dash {
+  border-color: #ffaa00;
+}
+.touch-btn-p2.touch-btn-fire {
+  border-color: #ff5500;
+  background: radial-gradient(circle, rgba(255, 85, 0, 0.25) 0%, rgba(180, 40, 0, 0.7) 100%);
+}
+.touch-btn-p2.touch-btn-spec {
+  border-color: #ffea00;
+  background: radial-gradient(circle, rgba(255, 234, 0, 0.25) 0%, rgba(180, 150, 0, 0.7) 100%);
+}
+
+#joystick-base-p2 {
+  position: absolute;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 170, 0, 0.4);
+  background: radial-gradient(circle, rgba(255, 170, 0, 0.05) 0%, rgba(20, 15, 5, 0.5) 100%);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  box-shadow: 0 0 15px rgba(255, 170, 0, 0.2);
+}
+#joystick-knob-p2 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffaa00 0%, #aa6600 100%);
+  border: 2px solid #ffffff;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 12px rgba(255, 170, 0, 0.6);
+  pointer-events: none;
+}
+
+.touch-btn-spec.ready {
+  animation: pulseSpecBtn 0.9s infinite alternate;
+  border-color: #ffffff;
+  box-shadow: 0 0 22px #ffbb00, inset 0 0 10px #ffbb00;
+}
+@keyframes pulseSpecBtn {
+  0% { transform: scale(1.0); filter: brightness(1.1); }
+  100% { transform: scale(1.08); filter: brightness(1.4); }
+}
+
+#portrait-warning {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(3, 3, 5, 0.98);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  box-sizing: border-box;
+  text-align: center;
+  color: #00e5ff;
+}
+.rotate-phone-icon {
+  font-size: 60px;
+  animation: rotatePhone 2.4s infinite ease-in-out;
+  margin-bottom: 20px;
+}
+@keyframes rotatePhone {
+  0%, 20% { transform: rotate(0deg); }
+  50%, 70% { transform: rotate(-90deg); }
+  100% { transform: rotate(0deg); }
+}
+#portrait-warning h2 {
+  letter-spacing: 2px;
+  margin-bottom: 15px;
+  color: #ff0055;
+}
+#portrait-warning p {
+  color: #cccccc;
+  font-size: 14px;
+  max-width: 340px;
+  line-height: 1.5;
+}
