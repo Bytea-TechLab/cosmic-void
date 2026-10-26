@@ -188,7 +188,7 @@ Clique com o botão direito sobre o arquivo `index.html` e selecione **"Open wit
 
 O projeto está publicado e funcional através do GitHub Pages oficial da organização:
 
-👉 **[https://bytea-techlab.github.io/cosmic-void/](https://bytea-techlab.github.io/cosmic-void/)**
+👉 **[https://bytea-techlab.github.io/cosmic-void/](https://bytea-techlab.github.io/cosmic-void/)** & **[https://projetocosmicvoid.gamer.gd/](https://projetocosmicvoid.gamer.gd/)**
 
 ---
 
